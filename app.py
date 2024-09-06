@@ -110,7 +110,19 @@ async def setCurrentLimit(current_info: current):
         created_data = await db["currentInfo"].find_one({"_id": new_data.inserted_id})
         return current(**created_data)
     
-
+@app.put("/webSocketState", status_code=200)
+async def setWebSocketState(socket_info: socket):
+    all_settings = await db["webSocketState"].find().to_list(999)
+    if len(all_settings)==1:
+        db["webSocketState"].update_one({"_id":all_settings[0]["_id"]},{"$set":socket_info.model_dump()})
+        updated_settings = await db["webSokcetState"].find_one({"_id": all_settings[0]["_id"]})
+        return socket(**updated_settings)
+    
+    else:
+        new_socket_info = socket_info.model_dump()
+        new_data = await db["webSocketState"].insert_one(new_socket_info)
+        created_data = await db["webSocketState"].find_one({"_id": new_data.inserted_id})
+        return socket(**created_data)
 
 @app.get("/currentLimit", status_code=200)
 async def get_current_limit():
