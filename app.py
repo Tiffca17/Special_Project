@@ -124,6 +124,11 @@ async def setWebSocketState(socket_info: socket):
         created_data = await db["webSocketState"].find_one({"_id": new_data.inserted_id})
         return socket(**created_data)
 
+@app.get("/webSocketState", status_code=200)
+async def get_web_socket():
+    data = await db["webSocketState"].find().to_list(1)
+    return TypeAdapter(List[socket]).validate_python(data)
+
 @app.get("/currentLimit", status_code=200)
 async def get_current_limit():
     data = await db["currentInfo"].find().to_list(1)
